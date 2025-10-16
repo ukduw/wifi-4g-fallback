@@ -27,3 +27,8 @@
     # sudo systemctl enable --now net-fallback.service
 
 
+# make sure 4g conn has correct APN
+# test manually for reliability before automating
+
+# when switching networks, dns resolution may be cached
+    # consider systemd-resolve --flush-caches or resolvectl flush-caches if stale results
