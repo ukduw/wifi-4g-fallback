@@ -85,3 +85,13 @@ run_once(){
     fi
 }
 
+if [ "$mode" = "once" ]; then
+    run_once
+    exit 0
+fi
+
+# continuous loop
+while true; do
+    run_once
+    sleep $SLEEP_LOOP
+done
