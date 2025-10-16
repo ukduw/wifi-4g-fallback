@@ -49,3 +49,39 @@ bring_down_mobile() {
     nmcli connection down "$MOBILE_CONN" >/dev/null 2>&1
 }
 
+main_check() {
+    if ping_check && http_check; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+
+mode="" # "once" to only run once
+run_once(){
+    if main_check; then
+        ok_count=$(cat "$OK_COUNT_FILE" 2>/dev/null || echo 0)
+        ok_count=$((ok_count+1))
+        echo "$ok_count" > "$OK_COUNT_FILE"
+        echo 0 > "$FAIL_COUNT_FILE"
+        if [ "$ok_count" -ge "$RECOVER_THRESHOLD" ]; then
+            if nmcli -t -f NAME,DEVICE connection show --active | grep -q "^MOBILE_CONN"
+                bring_down_mobile
+                logger -t net-fallback "Recovered; bringing mobile down"
+            fi
+        fi
+    else
+        fail_count=$(cat "$FAIL_COUNT_FILE" 2>/dev/null || echo 0)
+        fail_count=$((fail_count+1))
+        echo "$fail_count" > "$FAIL_COUNT_FILE"
+        echo 0 > "$OK_COUNT_FILE"
+        if [ "$fail_count" -ge "$FAIL_THRESHOLD" ]; then
+            if ! nmcli -t -f NAME connection show --active | grep -q "^$MOBILE_CONN"
+                bring_up_mobile
+                logger -t net-failover "Wifi down; bringing mobile fallback up"
+            fi
+        fi
+    fi
+}
+
