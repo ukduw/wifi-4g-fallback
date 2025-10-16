@@ -95,3 +95,8 @@ while true; do
     run_once
     sleep $SLEEP_LOOP
 done
+
+
+# write systemd service + timer
+    # run as persistent process
+    # (alternative: cron, once per min)
