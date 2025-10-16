@@ -8,12 +8,17 @@
 # ModemManager + usb_modeswitch likely needed
 
 # commands:
-    # list connections: nmcli connection show
+    # see devices: nmcli device status
+    # list connections: nmcli connection show (--active)
     # nmcli connection up/down: nmcli connection up/down "4g-usb"
+    # see default route and metrics: ip route
 
 # (for when both are available)
     # lower metric = preferred
     # nmcli connection modify "home-wifi" ipv4.route-metric 100
     # nmcli connection modify "4g-usb" ipv4.route-metric 600
+
+# check logs:
+    # journalctl -t net-fallback
 
 
