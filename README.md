@@ -22,3 +22,8 @@
     # journalctl -t net-fallback
 
 
+# systemd
+    # sudo systemctl daemon-reload
+    # sudo systemctl enable --now net-fallback.service
+
+
