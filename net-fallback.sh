@@ -30,8 +30,8 @@ http_check() {
 }
 
 is_wifi_default_route() {
-    wifi_dev=$(nmcli -g GENERAL.DEVICE connection show "$WIFI_CONN" 2>/dev/null | grep -q "dev $wifi_dev")
-    if [ -z "$wifi_dev"]; then
+    wifi_dev=$(nmcli -g GENERAL.DEVICE connection show "$WIFI_CONN" 2>/dev/null)
+    if [ -z "$wifi_dev" ]; then
         return 1
     fi
     ip route get 8.8.8.8 2>/dev/null | grep -q "dev $wifi_dev"
