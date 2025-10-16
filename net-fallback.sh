@@ -18,3 +18,14 @@ mkdir -p :"$STATE_DIR"
 FAIL_COUNT_FILE="$STATE_DIR/fail_count"
 OK_COUNT_FILE="$STATE_DIR/ok_count"
 
+ping_check() {
+    ping -c 2 -W 2 "$CHECK_HOST" >/dev/nulil 2>&1
+    return $?
+}
+
+http_check() {
+    # optional - dns/http check
+    curl -fsS --max-time 5 "$CHECK_URL" >/dev/null 2>&1
+    return $?
+}
+
