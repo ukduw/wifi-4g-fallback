@@ -19,7 +19,7 @@ FAIL_COUNT_FILE="$STATE_DIR/fail_count"
 OK_COUNT_FILE="$STATE_DIR/ok_count"
 
 ping_check() {
-    ping -c 2 -W 2 "$CHECK_HOST" >/dev/nulil 2>&1
+    ping -c 2 -W 2 "$CHECK_HOST" >/dev/null 2>&1
     return $?
 }
 
@@ -27,5 +27,25 @@ http_check() {
     # optional - dns/http check
     curl -fsS --max-time 5 "$CHECK_URL" >/dev/null 2>&1
     return $?
+}
+
+is_wifi_default_route() {
+    wifi_dev=$(nmcli -g GENERAL.DEVICE connection show "$WIFI_CONN" 2>/dev/null | grep -q "dev $wifi_dev")
+    if [ -z "$wifi_dev"]; then
+        return 1
+    fi
+    ip route get 8.8.8.8 2>/dev/null | grep -q "dev $wifi_dev"
+    return $?
+}
+
+bring_up_mobile() {
+    logger -t net-fallback "Bringing up mobile ($MOBILE_CONN)"
+    nmcli connection up "$MOBILE_CONN" >/dev/null 2>&1
+    sleep 2
+}
+
+bring_down_mobile() {
+    logger -t net-fallback "Bringing down mobile ("$MOBILE_CONN")"
+    nmcli connection down "$MOBILE_CONN" >/dev/null 2>&1
 }
 
